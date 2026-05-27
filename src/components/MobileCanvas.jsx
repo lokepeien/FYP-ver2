@@ -1,10 +1,17 @@
 import React, { useState } from 'react';
+import Login from '../../librarygo-monorepo/mobile-app/src/modules/auth/Login';
+import Profile from '../../librarygo-monorepo/mobile-app/src/modules/auth/Profile';
+import DashboardHome from '../../librarygo-monorepo/mobile-app/src/modules/dashboard/DashboardHome';
+import BookingManager from '../../librarygo-monorepo/mobile-app/src/modules/booking/BookingManager';
+import CheckInTimer from '../../librarygo-monorepo/mobile-app/src/modules/checkin/CheckInTimer';
+import UtilitiesModule from '../../librarygo-monorepo/mobile-app/src/modules/utilities/UtilitiesModule';
 
 export default function MobileCanvas({ triggerNfcScan, isNfcActive }) {
   // Centralized currentView routing inside the Student Mobile App
   const [currentView, setCurrentView] = useState('home');
+  const [user, setUser] = useState(null); // Keeps track of logged-in student user
 
-  // Array mapped list of Material 3 Bottom Navigation bar items
+  // Array mapped list of Material 3 Bottom Navigation bar items (now including Utilities!)
   const navItems = [
     {
       id: 'home',
@@ -30,6 +37,15 @@ export default function MobileCanvas({ triggerNfcScan, isNfcActive }) {
       icon: (
         <svg viewBox="0 0 24 24" style={{ width: '22px', height: '22px', fill: 'currentColor' }}>
           <path d="M4 20h16V4H4v16zm4-12h8v8H8V8z"/>
+        </svg>
+      )
+    },
+    {
+      id: 'utilities',
+      label: 'Utils',
+      icon: (
+        <svg viewBox="0 0 24 24" style={{ width: '22px', height: '22px', fill: 'currentColor' }}>
+          <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/>
         </svg>
       )
     },
@@ -68,76 +84,28 @@ export default function MobileCanvas({ triggerNfcScan, isNfcActive }) {
           {/* Scrollable screen views based on currentView state */}
           <div className="mobile-app-content">
             
-            {/* VIEW A: HOME VIEW */}
-            {currentView === 'home' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%' }}>
-                <div className="m3-mobile-card elevated" style={{ borderRadius: '28px' }}>
-                  <h3 className="m3-title-large">Welcome to LibraryGo</h3>
-                  <p className="m3-body-medium">Locate your seat, scan the NFC tag on the desk, and check-in instantly.</p>
-                </div>
+            {/* If user is not logged in, force Login screen view first */}
+            {!user ? (
+              <Login onLoginSuccess={(u) => setUser(u)} />
+            ) : (
+              <>
+                {/* VIEW A: HOME VIEW (Strike Tracker & Standard Banner) */}
+                {currentView === 'home' && <DashboardHome />}
 
-                <div className="nfc-wave-container" style={{ borderRadius: '28px' }}>
-                  {isNfcActive && <div className="nfc-wave-active"></div>}
-                  <div className="nfc-icon-wrapper" onClick={triggerNfcScan} title="Simulate NFC Desk Scan">
-                    <svg viewBox="0 0 24 24">
-                      <path d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 18H4V4h16v16zm-8-3c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0-8c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"/>
-                    </svg>
-                  </div>
-                  <h4 className="m3-title-medium">NFC Quick Scanner</h4>
-                  <p className="m3-body-medium" style={{ opacity: 0.8, marginTop: '0.25rem' }}>Tap your smartphone near any desk tag to check-in or checkout.</p>
-                </div>
+                {/* VIEW B: BOOK SEAT VIEW (Reservation forms & FAB) */}
+                {currentView === 'book' && <BookingManager />}
 
-                <div className="m3-mobile-card" style={{ borderRadius: '28px' }}>
-                  <h4 className="m3-title-medium">Your Bookings</h4>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.25rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--md-sys-color-outline-variant)', paddingBottom: '0.5rem' }}>
-                      <div>
-                        <p className="m3-body-medium" style={{ fontWeight: 600 }}>Zone A - Seat 42</p>
-                        <p className="m3-body-medium" style={{ fontSize: '0.75rem', color: 'var(--md-sys-color-outline)' }}>Main Hall (Level 2)</p>
-                      </div>
-                      <span className="badge-tag crimson">NFC Checked</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+                {/* VIEW C: NFC SCANNER VIEW (Countdown Timer & Circular SVG progress ring) */}
+                {currentView === 'scan' && <CheckInTimer />}
 
-            {/* VIEW B: BOOK SEAT VIEW */}
-            {currentView === 'book' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%' }}>
-                <h3 className="m3-headline-medium">Book a Seat</h3>
-                <p className="m3-body-medium">Choose a level or reserve a hot desk directly.</p>
-                
-                <div className="m3-mobile-card" style={{ borderRadius: '28px' }}>
-                  <h4 className="m3-title-medium">Zone Selector</h4>
-                  <p className="m3-body-medium">Select preferred quiet zones or group discussion zones.</p>
-                  <button className="m3-btn-mobile" style={{ marginTop: '0.5rem', borderRadius: '12px' }}>Select Zone</button>
-                </div>
-              </div>
-            )}
+                {/* VIEW D: UTILITIES VIEW (Announcements, Complaints, Lost & Found grid) */}
+                {currentView === 'utilities' && <UtilitiesModule />}
 
-            {/* VIEW C: NFC SCANNER VIEW */}
-            {currentView === 'scan' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', alignItems: 'center', justifyContent: 'center', textAlign: 'center', minHeight: '250px' }}>
-                <div className="nfc-icon-wrapper" onClick={triggerNfcScan} style={{ width: '80px', height: '80px' }}>
-                  <svg viewBox="0 0 24 24" width="40" height="40"><path d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 18H4V4h16v16zm-8-3c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0-8c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"/></svg>
-                </div>
-                <h3 className="m3-headline-medium">Simulated Tag Scanner</h3>
-                <p className="m3-body-medium">Align device with NFC Tag placed on study tables.</p>
-                <p className="m3-body-medium" style={{ color: 'var(--md-sys-color-primary)', fontWeight: 700, marginTop: '0.5rem' }}>[Tap NFC scanner or Workspace Control simulation trigger to scan]</p>
-              </div>
-            )}
-
-            {/* VIEW D: PROFILE VIEW */}
-            {currentView === 'profile' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%' }}>
-                <h3 className="m3-headline-medium">Student Profile</h3>
-                <div className="m3-mobile-card" style={{ alignItems: 'center', textAlign: 'center', borderRadius: '28px' }}>
-                  <div className="list-avatar" style={{ width: '60px', height: '60px', fontSize: '1.5rem' }}>SP</div>
-                  <h4 className="m3-title-medium" style={{ marginTop: '0.5rem' }}>Siti Puteri</h4>
-                  <p className="m3-body-medium" style={{ color: 'var(--md-sys-color-outline)' }}>UTM Student ID: 220914</p>
-                </div>
-              </div>
+                {/* VIEW E: PROFILE VIEW (Avatar uploads & College metrics) */}
+                {currentView === 'profile' && (
+                  <Profile studentData={user} onLogout={() => setUser(null)} />
+                )}
+              </>
             )}
 
           </div>
