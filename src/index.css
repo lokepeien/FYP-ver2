@@ -44,9 +44,9 @@
   /* Corner Radii (M3 Specs) */
   --md-shape-corner-extra-small: 4px;
   --md-shape-corner-small: 8px;
-  --md-shape-corner-medium: 12px;     /* Inputs, Buttons */
+  --md-shape-corner-medium: 12px;     /* Inputs, Buttons (12dp equivalent) */
   --md-shape-corner-large: 16px;
-  --md-shape-corner-extra-large: 28px; /* Cards, Dialogs, Floating Elements */
+  --md-shape-corner-extra-large: 28px; /* Cards, Dialogs (28dp equivalent) */
   --md-shape-corner-full: 9999px;
   
   /* Fonts */
@@ -189,6 +189,7 @@ h1, h2, h3, h4, h5, h6 {
   z-index: 100;
   box-shadow: var(--md-elevation-1);
   transition: background-color var(--transition-medium), border-color var(--transition-medium);
+  flex-shrink: 0;
 }
 
 .logo-container {
@@ -428,6 +429,7 @@ h1, h2, h3, h4, h5, h6 {
   background: radial-gradient(circle at top left, rgba(114, 9, 183, 0.03), transparent 60%),
               radial-gradient(circle at bottom right, rgba(183, 9, 76, 0.03), transparent 60%);
   overflow: hidden;
+  height: 100vh;
 }
 
 /* Header overlay bar inside stage */
@@ -442,6 +444,7 @@ h1, h2, h3, h4, h5, h6 {
   backdrop-filter: blur(12px);
   z-index: 10;
   transition: all var(--transition-medium);
+  flex-shrink: 0;
 }
 
 [data-theme="dark"] .stage-header {
@@ -510,6 +513,7 @@ h1, h2, h3, h4, h5, h6 {
   padding: 2rem;
   min-height: 0;
   overflow: auto;
+  width: 100%;
 }
 
 /* Simulated Smartphone Body */
@@ -588,6 +592,7 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--md-sys-color-on-background);
   opacity: 0.8;
   z-index: 10;
+  flex-shrink: 0;
 }
 
 .status-time {
@@ -660,6 +665,7 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 8px 16px rgba(114, 9, 183, 0.3);
   z-index: 1;
   transition: transform var(--transition-fast);
+  cursor: pointer;
 }
 
 .nfc-icon-wrapper svg {
@@ -722,6 +728,7 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   padding: 0 1rem;
   z-index: 10;
+  flex-shrink: 0;
 }
 
 .m3-bottom-nav-item {
@@ -782,6 +789,7 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: center;
   z-index: 10;
   background-color: var(--md-sys-color-surface);
+  flex-shrink: 0;
 }
 
 .home-indicator {
@@ -799,6 +807,7 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   height: calc(100vh - 64px);
   overflow: hidden;
+  width: 100%;
 }
 
 /* Left-aligned M3 Navigation Drawer */
@@ -986,6 +995,7 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   justify-content: center;
   font-weight: 700;
+  flex-shrink: 0;
 }
 
 .badge-tag {
